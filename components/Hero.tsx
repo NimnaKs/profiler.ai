@@ -1,168 +1,82 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-
-export default function Hero() {
-  const [dragOver, setDragOver] = useState(false);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [showUrl, setShowUrl] = useState(false);
-  const [urlValue, setUrlValue] = useState("");
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const f = e.dataTransfer.files?.[0];
-    if (f) setFileName(f.name);
-  }, []);
-
-  useEffect(() => {
-    const onPaste = (e: ClipboardEvent) => {
-      const f = e.clipboardData?.files?.[0];
-      if (f) setFileName(f.name);
-    };
-    window.addEventListener("paste", onPaste);
-    return () => window.removeEventListener("paste", onPaste);
-  }, []);
-
+export default function HeroPage() {
   return (
-    <section className="relative overflow-hidden">
-      {/* Background with subtle, artistic blur shapes */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-50 via-white to-sky-50" />
-      <div className="pointer-events-none absolute -left-1/4 -top-1/4 h-3/4 w-3/4 rounded-full bg-cyan-100/30 blur-3xl animate-blob-slow" />
-      <div className="pointer-events-none absolute -right-1/3 bottom-1/4 h-3/4 w-3/4 rounded-full bg-indigo-100/30 blur-3xl animate-blob-reverse" />
+    <main className="relative overflow-hidden">
+      {/* ---- Background (clean + professional) ---- */}
+      {/* Base vertical wash */}
+      <div className="absolute inset-0 -z-20 bg-gradient-to-b from-white via-slate-50 to-white" />
+      {/* Soft spotlight behind the hero */}
+      <div
+        className="pointer-events-none absolute -z-10 left-1/2 -top-40 h-[34rem] w-[80rem] -translate-x-1/2 rounded-full opacity-70"
+        style={{
+          background:
+            "radial-gradient(60% 60% at 50% 40%, rgba(37,99,235,0.10), transparent 70%)",
+        }}
+      />
+      {/* Faint dot grid, masked so it fades toward edges */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.08]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, #0f172a 1px, transparent 0)",
+          backgroundSize: "22px 22px",
+          maskImage:
+            "radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at center, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%)",
+        }}
+      />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid min-h-[calc(100svh-4rem)] items-center gap-12 py-12 lg:grid-cols-2 lg:gap-16 lg:py-20">
-          {/* LEFT — Marketing copy and upload functionality */}
-          <div className="lg:pr-12">
-            <h1 className="max-w-xl text-5xl font-extrabold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Turn a{" "}
-              <span className="relative inline-block">
-                selfie
-                <span className="absolute left-0 bottom-0 h-2 w-full bg-pink-300/60 rounded-full -z-10" />
-              </span>{" "}
-              into a professional headshot.
-            </h1>
-            <p className="mt-6 max-w-lg text-lg text-slate-600">
-              Our AI-powered tool transforms your casual photos into polished,
-              studio-quality headshots perfect for your LinkedIn profile, CV,
-              and more.
-            </p>
+      {/* ---- Hero ---- */}
+      <section className="container mx-auto px-4 text-center py-16 sm:py-24">
+        {/* Main Marketing Headlines */}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-700 mb-5 leading-tight">
+          Your Career Deserves a
+          <br className="hidden sm:block" />
+          <span className="relative inline-block bg-gradient-to-r from-blue-600 via-indigo-600 to-slate-700 bg-clip-text text-transparent">
+            Professional Image
+          </span>
+        </h1>
 
-            {/* Main upload area */}
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragOver(true);
-              }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={onDrop}
-              className={[
-                "mt-8 p-6 rounded-2xl border-2 border-dashed transition-colors duration-200",
-                dragOver
-                  ? "border-indigo-400 bg-indigo-50/50"
-                  : "border-slate-300 bg-white",
-              ].join(" ")}
-              aria-label="Image upload area"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-slate-700">
-                  {fileName
-                    ? `Selected: ${fileName}`
-                    : "Drag & drop a file here"}
-                </p>
-                <button
-                  onClick={() => inputRef.current?.click()}
-                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-                >
-                  {fileName ? "Change Photo" : "Browse Files"}
-                </button>
-              </div>
-              <input
-                id="hero-file-input"
-                ref={inputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
-              />
-            </div>
-
-            {/* URL input and other options */}
-            <div className="mt-4 flex flex-wrap items-center gap-4">
-              <button
-                type="button"
-                onClick={() => setShowUrl((v) => !v)}
-                className="text-sm text-slate-700 underline decoration-slate-300 hover:text-slate-900 hover:decoration-slate-400"
-              >
-                {showUrl ? "Hide URL input" : "Or paste a link instead"}
-              </button>
-              {showUrl && (
-                <form
-                  className="flex items-center gap-2 flex-grow"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (urlValue.trim()) setFileName(urlValue.trim());
-                  }}
-                >
-                  <input
-                    type="url"
-                    placeholder="https://example.com/photo.jpg"
-                    value={urlValue}
-                    onChange={(e) => setUrlValue(e.target.value)}
-                    className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button className="rounded-md bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700">
-                    Add
-                  </button>
-                </form>
-              )}
-            </div>
-
-            {/* Legal and information text */}
-            <div className="mt-6 flex flex-wrap justify-start items-center gap-3 text-xs text-slate-500">
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                JPG, PNG, HEIC
-              </span>
-              <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1">
-                Up to 15 MB
-              </span>
-              <p>We never store your photos.</p>
-            </div>
-          </div>
-
-          {/* RIGHT — Hero GIF with modern framing (hidden on small screens) */}
-          <div className="relative hidden lg:block h-full">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-full max-w-lg aspect-square">
-                <div
-                  className="absolute -inset-10 rounded-full bg-gradient-to-br from-pink-200/50 to-purple-200/50 blur-3xl animate-blob-pulse"
-                  aria-hidden
-                />
-                <img
-                  src="/hero.gif" // put your GIF at /public/hero.gif
-                  alt="Preview of a professional headshot"
-                  className="relative z-10 w-full rounded-[40px] shadow-[0_24px_80px_rgba(2,6,23,0.12)]"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* GIF for smaller screens (visible on small screens) */}
-          <div className="relative mx-auto mt-12 w-64 sm:w-72 lg:hidden">
-            <div
-              className="absolute -left-8 -top-8 h-48 w-48 rounded-[40%] bg-pink-300/70 blur-xl md:-left-12 md:-top-12 md:h-64 md:w-64 animate-blob"
-              aria-hidden
-            />
-            <img
-              src="/hero.gif"
-              alt="Preview of a professional headshot"
-              className="relative z-10 w-full rounded-2xl shadow-[0_24px_80px_rgba(2,6,23,0.12)]"
-            />
-          </div>
+        <div className="mx-auto max-w-3xl mb-8">
+          <h2 className="text-xl sm:text-2xl font-semibold text-slate-700 mb-4">
+            Transform Any Photo Into Studio-Quality Headshots in Seconds
+          </h2>
+          <p className="text-lg text-slate-600 leading-relaxed">
+            Don&apos;t let a casual selfie hold back your professional
+            potential. Our AI creates stunning headshots that make hiring
+            managers stop scrolling and start calling.
+          </p>
         </div>
-      </div>
-    </section>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <a
+            href="#uploads"
+            className="rounded-full bg-blue-600 hover:bg-blue-700 px-8 py-4 text-base font-semibold text-white shadow-lg transition-all duration-300 transform hover:scale-105"
+          >
+            Upload Your Photo
+          </a>
+          <a
+            href="#samples"
+            className="rounded-full border-2 border-slate-300 hover:border-slate-400 px-8 py-4 text-base font-semibold text-slate-700 hover:text-slate-900 transition-all duration-300"
+          >
+            See Sample Results
+          </a>
+        </div>
+
+        {/* File Format Info */}
+        <div className="mb-2 flex items-center justify-center gap-4 text-sm text-slate-500">
+          <span className="rounded-full border border-slate-200 px-4 py-2 bg-slate-50">
+            JPG, PNG, HEIC
+          </span>
+          <span className="rounded-full border border-slate-200 px-4 py-2 bg-slate-50">
+            Up to 15 MB
+          </span>
+          <span className="font-medium">No studio needed</span>
+        </div>
+      </section>
+    </main>
   );
 }
