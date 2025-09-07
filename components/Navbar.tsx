@@ -47,10 +47,9 @@ export default function Navbar() {
 
   const navLinks = [
     { href: "#", label: "Uploads" },
-    { href: "#", label: "Features" },
-    { href: "#", label: "Pricing" },
+    { href: "#", label: "Samples" },
     { href: "#", label: "How it works" },
-    { href: "#", label: "FAQ" },
+    { href: "#", label: "Pricing" },
   ];
 
   return (
